@@ -24,7 +24,7 @@ def get_route(data):
 
 	disp = sorted(disp, key=lambda k: k['id_route'])
 	if disp[len(disp) - 1]  - disp[0] > 0.5:
-		return disp.keys()[len(disp) - 1]
+		return {'id_route' :disp.keys()[len(disp) - 1],'data':data}
 	else:
-		return 0		
+		return {'id_route' :0,'data':data}		
 
