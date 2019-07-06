@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <title>Маршрут №{{road}}</title>
+            {{"decoupled-map"|googlemap_js(37.4419, -122.1419, varname="decoupledmap", markers=[(37.4419, -122.1419)])}}
+            {{mymap.js}}
+
+    </head>
+    <body>
+    <script>
+      var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 8
+        });
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEsraxsTwvKfGueWg3sL-XOjgMWIR2Ltc&callback=initMap"
+    async defer></script>
+
+
+        <h1> Маршрут № {{road}} </h1>
+        <h1> Время {{time}} </h1>
+    {{mymap.html}}
+    </body>
+</html>
