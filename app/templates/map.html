@@ -3,148 +3,170 @@
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <title>Waypoints in Directions</title>
+    <title>GIS Logistics</title>
     <style>
-      #right-panel {
-        font-family: 'Roboto','sans-serif';
-        line-height: 30px;
-        padding-left: 10px;
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
       }
-
-      #right-panel select, #right-panel input {
-        font-size: 15px;
-      }
-
-      #right-panel select {
-        width: 100%;
-      }
-
-      #right-panel i {
-        font-size: 12px;
-      }
+      /* Optional: Makes the sample page fill the window. */
       html, body {
         height: 100%;
         margin: 0;
         padding: 0;
       }
-      #map {
-        height: 100%;
-        float: left;
-        width: 70%;
-        height: 100%;
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
       }
-      #right-panel {
-        margin: 20px;
-        border-width: 2px;
-        width: 20%;
-        height: 400px;
-        float: left;
-        text-align: left;
-        padding-top: 0;
-      }
-      #directions-panel {
-        margin-top: 10px;
-        background-color: #FFEE77;
-        padding: 10px;
-        overflow: scroll;
-        height: 174px;
+      #warnings-panel {
+        width: 100%;
+        height:10%;
+        text-align: center;
       }
     </style>
   </head>
   <body>
     <div id="map"></div>
-    <div id="right-panel">
-    <div>
-    <b>Start:</b>
-    <select id="start">
-      <option value=44.685646, -63.542985>Halifax, NS</option>
-      <option value="Boston, MA">Boston, MA</option>
-      <option value="New York, NY">New York, NY</option>
-      <option value="Miami, FL">Miami, FL</option>
-    </select>
-    <br>
-    <b>Waypoints:</b> <br>
-    <i>(Ctrl+Click or Cmd+Click for multiple selection)</i> <br>
-    <select multiple id="waypoints">
-      <option value="montreal, quebec">Montreal, QBC</option>
-      <option value="toronto, ont">Toronto, ONT</option>
-      <option value="chicago, il">Chicago</option>
-      <option value="winnipeg, mb">Winnipeg</option>
-      <option value="fargo, nd">Fargo</option>
-      <option value="calgary, ab">Calgary</option>
-      <option value="spokane, wa">Spokane</option>
-    </select>
-    <br>
-    <b>End:</b>
-    <select id="end">
-      <option value=44.678433, -63.546421>Vancouver, BC</option>
-      <option value="Seattle, WA">Seattle, WA</option>
-      <option value="San Francisco, CA">San Francisco, CA</option>
-      <option value="Los Angeles, CA">Los Angeles, CA</option>
-    </select>
-    <br>
-      <input type="submit" id="submit">
-    </div>
-    <div id="directions-panel"></div>
-    </div>
+    &nbsp;
+    <div id="warnings-panel"></div>
     <script>
       function initMap() {
+        var markerArray = [];
+
+        // Instantiate a directions service.
         var directionsService = new google.maps.DirectionsService;
-        var directionsDisplay = new google.maps.DirectionsRenderer;
+
+        // Create a map and center it on Manhattan.
         var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 6,
+          zoom: 13,
           center: {lat: {{lat}}, lng: {{lng}}}
         });
-        directionsDisplay.setMap(map);
+        var start_x = {{start_x}} // массив с точками x
+        var start_y = {{start_y}} // массив с точками y
+        var end_x = {{end_x}} // массив с точками x
+        var end_y = {{end_y}} // массив с точками y
+        var waypoints_x = {{waypoints_x}} // массив с промежуточными точками x
+        var waypoints_y = {{waypoints_y}} // массив с промежуточными точками x
+        var rating = {{rating}} // массив рейтингов для подкраски
 
-        document.getElementById('submit').addEventListener('click', function() {
-          calculateAndDisplayRoute(directionsService, directionsDisplay);
-        });
+        for (var i = 0; i < start_x.length; i++) {
+          var start = new google.maps.LatLng(start_x[i], start_y[i]);
+          var end = new google.maps.LatLng(end_x[i], end_y[i]);
+          var points_x = waypoints_x[i];
+          var points_y = waypoints_y[i];
+          // подкращиваем в зависимости от цвета
+          if (rating[i] == 5) {
+            color = "#be001d"
+          }
+          if (rating[i] == 4) {
+            color = "#bc5e0b"
+          }
+          if (rating[i] == 3) {
+            color = "#baa000"
+          }
+          if (rating[i] == 2) {
+            color = "#93b817"
+          }
+          if (rating[i] == 1) {
+            color = "#46b922"
+          }
+          // Create a renderer for directions and bind it to the map.
+          var directionsDisplay = new google.maps.DirectionsRenderer({
+            map: map,
+             suppressMarkers: true, // выключить отображение маркеров А и Б
+               polylineOptions: { strokeColor: color,  strokeOpacity: 1.0, strokeWeight: 4 } // покраска линии
+          });
+
+          // Instantiate an info window to hold step text.
+          var stepDisplay = new google.maps.InfoWindow;
+
+          // Display the route between the initial start and end selections.
+          calculateAndDisplayRoute(
+                  directionsDisplay, directionsService, markerArray, stepDisplay, map, start, end, points_x, points_y);
+          // Listen to change events from the start and end lists.
+          var onChangeHandler = function () {
+            calculateAndDisplayRoute(
+                    directionsDisplay, directionsService, markerArray, stepDisplay, map, start, end, points_x, points_y);
+          };
+          // падает ошибка в логи вместе с этими строками
+          // document.getElementById('start').addEventListener('change', onChangeHandler);
+          // document.getElementById('end').addEventListener('change', onChangeHandler);
+        }
       }
 
-      function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+      function calculateAndDisplayRoute(directionsDisplay, directionsService,
+          markerArray, stepDisplay, map, start, end, points_x, points_y) {
+        // First, remove any existing markers from the map.
         var waypts = [];
-        var checkboxArray = document.getElementById('waypoints');
-        var start = new google.maps.LatLng({{start}});
-        var end  = new google.maps.LatLng({{end}});
-        for (var i = 0; i < checkboxArray.length; i++) {
-          if (checkboxArray.options[i].selected) {
+        for (var i = 0; i < points_x.length; i++) {
+            var waypoints = new google.maps.LatLng(points_x[i], points_y[i]);
             waypts.push({
-              location: checkboxArray[i].value,
-              stopover: true
+                location: waypoints,
+                stopover: true
             });
-          }
+        }
+        for (var i = 0; i < markerArray.length; i++) {
+            markerArray[i].setMap(null);
         }
 
+        // Retrieve the start and end locations and create a DirectionsRequest using
+        // WALKING directions.
         directionsService.route({
           origin: start,
-          destination: end,
           waypoints: waypts,
-          optimizeWaypoints: true,
-          travelMode: 'DRIVING'
+          destination: end,
+          travelMode: 'DRIVING',
         }, function(response, status) {
+          // Route the directions and pass the response to a function to create
+          // markers for each step.
           if (status === 'OK') {
+            document.getElementById('warnings-panel').innerHTML =
+                '<b>' + response.routes[0].warnings + '</b>';
             directionsDisplay.setDirections(response);
-            var route = response.routes[0];
-            var summaryPanel = document.getElementById('directions-panel');
-            summaryPanel.innerHTML = '';
-            // For each route, display summary information.
-            for (var i = 0; i < route.legs.length; i++) {
-              var routeSegment = i + 1;
-              summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment +
-                  '</b><br>';
-              summaryPanel.innerHTML += route.legs[i].start_address + ' to ';
-              summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
-              summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
-            }
+            showSteps(response, markerArray, stepDisplay, map);
           } else {
             window.alert('Directions request failed due to ' + status);
           }
         });
       }
+
+      function showSteps(directionResult, markerArray, stepDisplay, map) {
+        // For each step, place a marker, and add the text to the marker's infowindow.
+        // Also attach the marker to an array so we can keep track of it and remove it
+        // when calculating new routes.
+        var myRoute = directionResult.routes[0].legs[0];
+        for (var i = 0; i < myRoute.steps.length; i++) {
+          var marker = markerArray[i] = markerArray[i] || new google.maps.Marker;
+          marker.setMap(map);
+          marker.setVisible(false); // убираем отображение промежуточных маркеров
+          marker.setPosition(myRoute.steps[i].start_location);
+          attachInstructionText(
+              stepDisplay, marker, myRoute.steps[i].instructions, map);
+        }
+      }
+
+      function attachInstructionText(stepDisplay, marker, text, map) {
+        google.maps.event.addListener(marker, 'click', function() {
+          // Open an info window when the marker is clicked on, containing the text
+          // of the step.
+          stepDisplay.setContent(text);
+          stepDisplay.open(map, marker);
+        });
+      }
     </script>
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEsraxsTwvKfGueWg3sL-XOjgMWIR2Ltc&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key={{GOOGLEMAPS_KEY}}&callback=initMap">
     </script>
   </body>
 </html>
