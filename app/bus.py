@@ -1,11 +1,11 @@
 from app import app
-from flask import jsonify, request
+from flask import jsonify, request, render_template
 from app.api.bus import Bus
 
 
 @app.route('/bus/all')
 def bus_all():
-    return jsonify(Bus().get_all_bus_info())
+    return jsonify(Bus().get_all_bus_info()), 200, {'Access-Control-Allow-Origin': '*'}
 
 
 @app.route('/bus/static/counter', methods=['GET'])
@@ -13,7 +13,7 @@ def static_counter():
     indication = 0
     rs = Bus().get_all_bus_info()
     for rec in rs:
-        indication = max(indication, rec.get('индикация', 0))
+        indication = max(indication, rec.get('индикация', 1))
     result = {
         'индикация': indication,
         'data': rs
@@ -33,12 +33,27 @@ def static_equal():
     indication = 0
     rs = Bus().get_all_bus_info()
     for rec in rs:
-        indication = max(indication, rec.get('индикация', 0))
+        indication = max(indication, rec.get('индикация', 1))
     result = {
         'индикация': indication,
         'data': rs
     }
     return jsonify(result), 200, {'Access-Control-Allow-Origin': '*'}
+
+
+@app.route('/bus/equal')
+def bus_equal():
+    return render_template('comparative.html'), 200, {'Access-Control-Allow-Origin': '*'}
+
+
+@app.route('/bus/counter')
+def bus_counter():
+    return render_template('counter.html'), 200, {'Access-Control-Allow-Origin': '*'}
+
+
+@app.route('/bus/distrib')
+def bus_counter():
+    return render_template('counter.html'), 200, {'Access-Control-Allow-Origin': '*'}
 
 
 @app.route('/bus/static/equal', methods=['OPTION'])

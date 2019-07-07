@@ -98,7 +98,7 @@ class Life():
     
     def __init__(self):
         self.buses = []
-        buses = requests.get("http://10a7b29c.ngrok.io/bus/all").json()
+        buses = requests.get("http://localhost/bus/all").json()
         for i in buses:
             if False:
                 end_time = datetime.strptime(i.get("next_time"),'%Y-%m-%d')
@@ -110,7 +110,7 @@ class Life():
                 outcome = i.get("outcome")
             self.buses.append(Bus(id_bus = i.get("id_bus"),id_route = i.get("id_route"),outcome = outcome,weight = i.get("weight"),end_time =end_time))
 
-            print("self",outcome)
+            # print("self",outcome)
     def addBus(self,i):
         self.buses.append(Bus(i.get("id_bus"),i.get("id_route"),i.get("outcome"),i.get("weight"),None))
 
@@ -119,9 +119,9 @@ class Life():
             
 
     def run(self):
-        print("run,len",len(self.buses))
+        # print("run,len",len(self.buses))
         while(True):
-            print("while")
+            # print("while")
             for bus in self.buses:
 
                 if bus.outcome!=0:
@@ -133,8 +133,8 @@ class Life():
                 else:
                     bus_input = random.randint(0, bus.weight -bus.outcome + bus_output + 1)
 
-                print("post request ","\n\n")
-                requests.post("http://10a7b29c.ngrok.io/transaction",json = {
+                # print("post request ","\n\n")
+                requests.post("http://localhost/transaction",json = {
                                                                 "id_bus":bus.id,
                                                                 "id_route":bus.id_route,
                                                                 "input":bus_input,
@@ -146,11 +146,11 @@ class Life():
                                                                 "input":bus_input,
                                                                 "output":bus_output,
                     })
-                print(json.loads(data))
+                # print(json.loads(data))
                 
                 #post
-            print("get request")
-            life = requests.get("http://10a7b29c.ngrok.io/bus/all").json()
+            # print("get request")
+            life = requests.get("http://localhost/bus/all").json()
             now_buses = self.buses
             match = 0
             new_life = []
@@ -172,15 +172,15 @@ class Life():
                         
                         break
 
-            print("\nmatch",match,"\n\n")
-            print("but to add",new_life)
-            print("bus to del",new_buses)
+            # print("\nmatch",match,"\n\n")
+            # print("but to add",new_life)
+            # print("bus to del",new_buses)
             for i in new_life:
                 self.addBus(i)
 
             for i in new_buses:
                 self.removeBus(i)
-            print("sleep")
+            # print("sleep")
             # sleep(1)
 if __name__ == "__main__":
 
