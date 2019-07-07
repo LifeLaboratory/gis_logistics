@@ -98,6 +98,7 @@ select
   , coalesce( 
       case 
         when coalesce(outcome, 0) - data.output + data.input < 0 then 0
+        when coalesce(outcome, 0) - data.output + data.input > bus.weight then weight
         else coalesce(outcome, 0) - data.output + data.input
       end
     , 0)
@@ -119,6 +120,7 @@ from (
     , {input} as input
     , {output} as output
 ) data
+ left join bus bus on bus.id_bus = data.id_bus
  left join (
   select *
     , rh.next_halt as new_halt

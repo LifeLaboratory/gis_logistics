@@ -131,7 +131,7 @@ class Life():
                 if bus.outcome + bus_output == bus.weight:
                     bus_input = 0
                 else:
-                    bus_input = random.randint(0, bus.weight -bus.outcome + bus_output)  
+                    bus_input = random.randint(0, bus.weight -bus.outcome + bus_output + 1)
 
                 print("post request ","\n\n")
                 requests.post("http://10a7b29c.ngrok.io/transaction",json = {

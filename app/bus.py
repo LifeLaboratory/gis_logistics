@@ -18,12 +18,14 @@ def static_counter():
         'индикация': indication,
         'data': rs
     }
-    return jsonify(result)
+    return jsonify(result), 200, {'Access-Control-Allow-Origin': '*'}
 
 
 @app.route('/bus/static/counter', methods=['OPTION'])
 def static_counter_option():
-    return "OK", 200, {'Access-Control-Allow-Origin': '*'}
+    return "OK", 200, {'Access-Control-Allow-Origin': '*',
+                         'Access-Control-Allow-Methods': 'GET,POST,DELETE,PUT,OPTIONS',
+                         'Access-Control-Allow-Headers': 'X-Requested-With,Content-Type'}
 
 
 @app.route('/bus/static/equal')
@@ -36,12 +38,14 @@ def static_equal():
         'индикация': indication,
         'data': rs
     }
-    return jsonify(result)
+    return jsonify(result), 200, {'Access-Control-Allow-Origin': '*'}
 
 
 @app.route('/bus/static/equal', methods=['OPTION'])
 def static_equal_option():
-    return "OK", 200, {'Access-Control-Allow-Origin': '*'}
+    return "OK", 200, {'Access-Control-Allow-Origin': '*',
+                         'Access-Control-Allow-Methods': 'GET,POST,DELETE,PUT,OPTIONS',
+                         'Access-Control-Allow-Headers': 'X-Requested-With,Content-Type'}
 
 
 @app.route('/bus/<int:bus>')
