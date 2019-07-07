@@ -98,7 +98,7 @@ class Life():
     
     def __init__(self):
         self.buses = []
-        buses = requests.get("http://83ca514e.ngrok.io/bus/all").json()
+        buses = requests.get("http://10a7b29c.ngrok.io/bus/all").json()
         for i in buses:
             if False:
                 end_time = datetime.strptime(i.get("next_time"),'%Y-%m-%d')
@@ -134,7 +134,7 @@ class Life():
                     bus_input = random.randint(0, bus.weight -bus.outcome + bus_output)  
 
                 print("post request ","\n\n")
-                requests.post("http://83ca514e.ngrok.io/transaction",json = {
+                requests.post("http://10a7b29c.ngrok.io/transaction",json = {
                                                                 "id_bus":bus.id,
                                                                 "id_route":bus.id_route,
                                                                 "input":bus_input,
@@ -150,7 +150,7 @@ class Life():
                 
                 #post
             print("get request")
-            life = requests.get("http://83ca514e.ngrok.io/bus/all").json()
+            life = requests.get("http://10a7b29c.ngrok.io/bus/all").json()
             now_buses = self.buses
             match = 0
             new_life = []
@@ -181,7 +181,7 @@ class Life():
             for i in new_buses:
                 self.removeBus(i)
             print("sleep")
-            sleep(60)
+            # sleep(1)
 if __name__ == "__main__":
 
     life = Life()
