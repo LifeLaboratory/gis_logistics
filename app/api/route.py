@@ -4,9 +4,26 @@ from app.base.sql import Sql
 class Route:
     def get_all_route_bus(self):
         query = '''
-select *
-from route
+select 
+   end_x as end_y 
+  , end_y as end_x
+  , name
+  , start_x as start_y
+  , start_y as start_x
+  , id_route
+  , case 
+      when bus.weight * 0.8 > tn.outcome then 5
+      else 1
+    end as "Индикация"
+from route r 
   left join bus using(id_route)
+   left join lateral (
+   select outcome
+   from transaction tn
+   where tn.id_route = r.id_route
+   order by id_trunc
+   limit 1
+ ) tn on true
 order by 
   id_route
   , id_bus
@@ -69,22 +86,37 @@ select x, y
 from route_halt
   left join halt using(id_halt)
 where id_route = {id_route}
-order by next_halt nulls last
+  and id_halt % 2 = 0
+order by id_halt nulls last
+limit 23
 '''.format(id_route=id_route)
         x_y = Sql.exec(query)
         query = '''
 select *
-from route
-where id_route = {id_route}
+  , case 
+      when bus.weight * 0.8 > tn.outcome then 5
+      else 1
+    end as "Индикация"
+from route r
+ left join lateral (
+   select id_bus, outcome
+   from transaction tn
+   where tn.id_route = r.id_route
+   order by id_trunc
+   limit 1
+ ) tn on true
+ left join bus bus on bus.id_bus = tn.id_bus
+where r.id_route = {id_route}
 '''.format(id_route=id_route)
         x_y_average = Sql.exec(query)
         point = x_y_average[0]
         x = [elem.get('x') for elem in x_y]
         y = [elem.get('y') for elem in x_y]
         data = {
-            'start': '{},{}'.format(point.get('start_x'), point.get('start_y')),
-            'end': '{},{}'.format(point.get('end_x'), point.get('end_y')),
-            'waypoints_x': x,
-            'waypoints_y': y,
+            'start': '{},{}'.format(point.get('start_y'), point.get('start_x')),
+            'end': '{},{}'.format(point.get('end_y'), point.get('end_x')),
+            'waypoints_x': y,
+            'waypoints_y': x,
+            'индикация': point.get('Индикация')
         }
         return data

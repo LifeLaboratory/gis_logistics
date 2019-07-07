@@ -1,0 +1,139 @@
+hr{
+	margin:4 !important;
+}
+   @font-face {
+    font-family: Pompadur; /* Имя шрифта */
+    src: url('{{ url_for("static", filename='../fonts/BebasNeue Regular.ttf') }}'); /* Путь к файлу со шрифтом */
+   }
+   @font-face {
+    font-family: PompadurBold; /* Имя шрифта */
+    src: url('{{ url_for("static", filename='../fonts/BebasNeue Bold.ttf') }}'); /* Путь к файлу со шрифтом */
+   }
+
+.titile-fonts{
+	font-family: Pompadur;
+}
+.titile-fonts-bold{
+	font-family: PompadurBold;
+}
+.container, .row, .container-fluid{
+	margin: 0 !important;
+	max-width: 100% !important;
+	padding: 0 !important;
+}
+
+.col-md-12, .col-md-6, .col-md-4, .col-md-2{
+	padding: 0 !important	
+}
+
+
+.button-custom{
+	background-color: #ffc107;
+	border-radius: 50px;
+	padding: 15px 20px 15px 20px;
+	font-size: 24px;
+	font-weight: bold;
+	color: #474747;	
+	transition: 0.3s;
+	width: 40% !important;
+}
+
+.button-custom:hover{
+	color:#ffc107;
+	text-decoration: none;
+	background-color: #474747;
+	transition: 0.3s;
+}
+
+.href-padding{
+	padding-left: 50px;
+	font-size: 20px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	color: #ccc;
+}
+
+.href-padding:hover{
+	text-decoration: none;
+	color: #d16c00;
+}
+
+.href-active{
+	color: #ffc107;
+}
+
+.number{
+	padding: 0 !important;
+	font-size: 34px;
+	background-color: #878787;
+	color: white;
+	text-align: center;
+	font-weight: bold;
+}
+
+.gird-table{
+	font-weight: bold;
+	font-size: 24px;
+	color: white;
+	text-align: center;
+	background: #878787; /* Old browsers */
+	background: -moz-linear-gradient(left,  #878787 0%, #a5a5a5 64%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(left,  #878787 0%,#a5a5a5 64%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to right,  #878787 0%,#a5a5a5 64%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7d7e7d', endColorstr='#a5a5a5',GradientType=1 ); /* IE6-9 */
+
+
+}
+
+.title-table{
+	text-align: center;
+	color: #666666;
+	font-weight: bold;
+	padding-bottom: 7px;
+	padding-top: 7px;
+	font-size: 15px;
+}
+
+
+.navigator-block{
+	background-color: white;
+	float: right;
+	width: 85%;
+	height: 100px;
+}
+
+.num{
+	font-size: 21px !important;
+	color: white;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.line{
+	width: 100%;
+	height: 4px;
+	background-color: #727271;
+}
+
+.red{
+	color: red !important;
+}
+
+.gray{
+	color: #898989;
+}
+
+.undeline{
+	border-bottom: 2px solid #ccc;
+}
+
+.change{
+	background-color: #fecc00;
+	width: 80%;
+	margin: auto;
+}
+
+.green-text{
+	color: #a6cb64;
+	font-size: 15px;
+}

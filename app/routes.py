@@ -1,14 +1,20 @@
 import requests
 import json
 from app import app
-from flask import render_template
+from flask import jsonify, render_template
+from app.api.route import Route
 from config import GOOGLEMAPS_KEY, HOST
+
+
+@app.route('/')
+@app.route('/index')
+def index():
+    return render_template('index.html'), 200, {'Access-Control-Allow-Origin': '*'}
 
 
 @app.route('/route/all')
 def route_all():
-    r = requests.get('{}/route/all'.format(HOST))
-    roads = json.loads(r.text)
+    roads = Route().get_all_route_bus()
     start_x = []
     start_y = []
     end_x = []
@@ -36,8 +42,7 @@ def route_all():
 
 @app.route('/route/<int:id_route>')
 def route_one(id_route):
-    r = requests.get('{}/route/{}'.format(HOST, id_route))
-    road = json.loads(r.text)
+    road = Route().get_route_list(id_route)
     return render_template("driver.html",
                            start=road.get('start'),
                            end=road.get('end'),
