@@ -56,15 +56,15 @@
         var start_y = {{start_y}} // массив с точками y
         var end_x = {{end_x}} // массив с точками x
         var end_y = {{end_y}} // массив с точками y
-        var waypoints_x = {{waypoints_x}} // массив с промежуточными точками x
-        var waypoints_y = {{waypoints_y}} // массив с промежуточными точками x
+        // var waypoints_x = {{waypoints_x}} // массив с промежуточными точками x
+        // var waypoints_y = {{waypoints_y}} // массив с промежуточными точками x
         var rating = {{rating}} // массив рейтингов для подкраски
 
         for (var i = 0; i < start_x.length; i++) {
           var start = new google.maps.LatLng(start_x[i], start_y[i]);
           var end = new google.maps.LatLng(end_x[i], end_y[i]);
-          var points_x = waypoints_x[i];
-          var points_y = waypoints_y[i];
+          // var points_x = waypoints_x[i];
+          // var points_y = waypoints_y[i];
           // подкращиваем в зависимости от цвета
           if (rating[i] == 5) {
             color = "#be001d"
@@ -93,11 +93,11 @@
 
           // Display the route between the initial start and end selections.
           calculateAndDisplayRoute(
-                  directionsDisplay, directionsService, markerArray, stepDisplay, map, start, end, points_x, points_y);
+                  directionsDisplay, directionsService, markerArray, stepDisplay, map, start, end,);
           // Listen to change events from the start and end lists.
           var onChangeHandler = function () {
             calculateAndDisplayRoute(
-                    directionsDisplay, directionsService, markerArray, stepDisplay, map, start, end, points_x, points_y);
+                    directionsDisplay, directionsService, markerArray, stepDisplay, map, start, end);
           };
           // падает ошибка в логи вместе с этими строками
           // document.getElementById('start').addEventListener('change', onChangeHandler);
@@ -106,25 +106,25 @@
       }
 
       function calculateAndDisplayRoute(directionsDisplay, directionsService,
-          markerArray, stepDisplay, map, start, end, points_x, points_y) {
+          markerArray, stepDisplay, map, start, end) {
         // First, remove any existing markers from the map.
-        var waypts = [];
-        for (var i = 0; i < points_x.length; i++) {
-            var waypoints = new google.maps.LatLng(points_x[i], points_y[i]);
-            waypts.push({
-                location: waypoints,
-                stopover: true
-            });
-        }
+        // var waypts = [];
+        // for (var i = 0; i < points_x.length; i++) {
+        //     var waypoints = new google.maps.LatLng(points_x[i], points_y[i]);
+        //     waypts.push({
+        //         location: waypoints,
+        //         stopover: true
+        //     });
+        // }
         for (var i = 0; i < markerArray.length; i++) {
             markerArray[i].setMap(null);
         }
 
         // Retrieve the start and end locations and create a DirectionsRequest using
         // WALKING directions.
+        // waypoints: waypts, промежуточные точки
         directionsService.route({
           origin: start,
-          waypoints: waypts,
           destination: end,
           travelMode: 'DRIVING',
         }, function(response, status) {
