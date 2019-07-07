@@ -8,6 +8,46 @@ def bus_all():
     return jsonify(Bus().get_all_bus_info())
 
 
+@app.route('/bus/static/counter', methods=['GET'])
+def static_counter():
+    indication = 0
+    rs = Bus().get_all_bus_info()
+    for rec in rs:
+        indication = max(indication, rec.get('индикация', 0))
+    result = {
+        'индикация': indication,
+        'data': rs
+    }
+    return jsonify(result), 200, {'Access-Control-Allow-Origin': '*'}
+
+
+@app.route('/bus/static/counter', methods=['OPTION'])
+def static_counter_option():
+    return "OK", 200, {'Access-Control-Allow-Origin': '*',
+                         'Access-Control-Allow-Methods': 'GET,POST,DELETE,PUT,OPTIONS',
+                         'Access-Control-Allow-Headers': 'X-Requested-With,Content-Type'}
+
+
+@app.route('/bus/static/equal')
+def static_equal():
+    indication = 0
+    rs = Bus().get_all_bus_info()
+    for rec in rs:
+        indication = max(indication, rec.get('индикация', 0))
+    result = {
+        'индикация': indication,
+        'data': rs
+    }
+    return jsonify(result), 200, {'Access-Control-Allow-Origin': '*'}
+
+
+@app.route('/bus/static/equal', methods=['OPTION'])
+def static_equal_option():
+    return "OK", 200, {'Access-Control-Allow-Origin': '*',
+                         'Access-Control-Allow-Methods': 'GET,POST,DELETE,PUT,OPTIONS',
+                         'Access-Control-Allow-Headers': 'X-Requested-With,Content-Type'}
+
+
 @app.route('/bus/<int:bus>')
 def bus_one(bus):
     return jsonify(Bus().get_one_bus_info(bus))

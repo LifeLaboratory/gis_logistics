@@ -12,3 +12,8 @@ def index():
 @app.route('/route/all')
 def route_all():
     return jsonify(Route().get_all_route_bus())
+
+
+@app.route('/route/<int:id_route>')
+def route_one(id_route):
+    return jsonify(Route().get_route_list(id_route))

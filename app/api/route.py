@@ -47,7 +47,8 @@ from (
 max_coef as (
   select max(coef)
   from agr
-)
+),
+select_route (
   select 
     case 
       when max - (select coef from agr where id_route = {id_route} limit 1) > 0.5 and (select count(1) from bus where id_route = 2) > 1 then (select id_route from agr where coef = max limit 1)
@@ -56,4 +57,34 @@ max_coef as (
   from agr
     left join max_coef on true
   limit 1
-'''.format()
+)
+table select_route
+'''.format(id_route=1)
+        return Sql.exec(query)
+
+    @staticmethod
+    def get_route_list(id_route):
+        query = '''
+select x, y
+from route_halt
+  left join halt using(id_halt)
+where id_route = {id_route}
+order by next_halt nulls last
+'''.format(id_route=id_route)
+        x_y = Sql.exec(query)
+        query = '''
+select *
+from route
+where id_route = {id_route}
+'''.format(id_route=id_route)
+        x_y_average = Sql.exec(query)
+        point = x_y_average[0]
+        x = [elem.get('x') for elem in x_y]
+        y = [elem.get('y') for elem in x_y]
+        data = {
+            'start': '{},{}'.format(point.get('start_x'), point.get('start_y')),
+            'end': '{},{}'.format(point.get('end_x'), point.get('end_y')),
+            'waypoints_x': x,
+            'waypoints_y': y,
+        }
+        return data
